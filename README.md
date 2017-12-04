@@ -16,12 +16,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 [image1]: ./output_images/image240.png
-[image2]: ./examples/HOG_example.jpg
 [image3]: ./output_images/search_windows.png
-[image4]: ./examples/sliding_window.jpg
-[image5]: ./examples/bboxes_and_heat.png
-[image6]: ./examples/labels_map.png
-[image7]: ./examples/output_bboxes.png
 [image8]: ./output_images/image0067.png
 [image10]: ./output_images/1RGB2HLS.png
 [image11]: ./output_images/1RGB2HSV.png
@@ -59,6 +54,19 @@ The goals / steps of this project are the following:
 [image43]: ./output_images/test4.png
 [image44]: ./output_images/test5.png
 [image45]: ./output_images/test6.png
+[image46]: ./output_images/heat1.png
+[image47]: ./output_images/heat2.png
+[image48]: ./output_images/heat3.png
+[image49]: ./output_images/heat4.png
+[image50]: ./output_images/heat5.png
+[image51]: ./output_images/heat6.png
+[image52]: ./output_images/heat7.png
+[image53]: ./output_images/heat8.png
+[image54]: ./output_images/heat9.png
+[image55]: ./output_images/heat10.png
+[image56]: ./output_images/heat_thresh.png
+[image57]: ./output_images/heat_labels.png
+[image58]: ./output_images/boximage.jpg
 [video1]: ./project_video.mp4
 [video2]: ./output_images/result_output.avi
 
@@ -242,19 +250,37 @@ Here's a [link to my video result](./output_images/result_output.avi)
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
+In order to filter out as many false postives as possible, I played with several possible options. Initially I looked at using a heatmap technique that assign a higher probability of a detection based on the number of search tiles that overlap on a given area. While this works if you group together tiles very tightly, I wanted to fast processing, and therefore wanted to limit the number if tiles I tested at runtime.
 
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
+What I came up with was a class called `heatmap_filter()`. This is how it works:
 
-### Here are six frames and their corresponding heatmaps:
+After processing each frame of the video, I have a list of bounding boxes of suspected vehicle locations in my image. I then create a mask frame, and in that mask frame, I set each pixel value to one that falls within any bounding box I listed for that frame. I then take that mask and put it into a dequeue structure to act as a FIFO buffer. I set my buffer to keep a history of the last 10 mask frames from the video.
 
-![alt text][image5]
+Now, I create a second mask frame (my aggregate), and add up each pixel value from those in my history queue. Finally, all the pixels in my aggregate are set to zero if the pixel value is <= 6 (threshold), or 1 otherwise.
 
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
+At this point I have an aggregate view of stable tracks over a period of time, it allows for short dropout of stable tracks, and only lets through strong signals. I apply `scipy.ndimage.measurements.label` to this aggregate to identify clumps of hot pixels, where each detected 'clump' is taken to be a vehicle. I then draw my final bounding boxes around each label, this is what is shown on my final video.
+
+### Here are the heatmap masks from the final 10 frames of the video. White boxes indicate possible detections:
+
+![alt text][image46]
+![alt text][image47]
+![alt text][image48]
+![alt text][image49]
+![alt text][image50]
+![alt text][image51]
+![alt text][image52]
+![alt text][image53]
+![alt text][image54]
+![alt text][image55]
+
+### Here is the output of the ten frames after threshold:
+![alt text][image56]
+
+### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all ten frames:
+![alt text][image57]
 
 ### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
+![alt text][image58]
 
 
 

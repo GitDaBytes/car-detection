@@ -100,7 +100,7 @@ Example Car:
 
 Next up, I decided to explore images looking at changing colorspaces, and looking at each image channel seperately. The end goal in my opinion is to be able to select a small a set of features as possible for detecting cars in a video stream. If we have too many features, the algorithm will run slowly, but we want to make a decision quickly, this is to be used in a car for safety applications after all!
 
-Below is an example whereby I plotted car and non-car images channel by channel in different colorspaces. I also computer the HOG of each channel and plotted that too. I am looking for a colorspace and channel that shows nice clean identifiable car / non-car images. If I can find that, I have reduced my HOG data and computations by a third right off the bat...
+Below is an example whereby I plotted car and non-car images channel by channel in different colorspaces. I also computed the HOG of each channel and plotted that too. I am looking for a colorspace and channel that shows nice clean identifiable car / non-car images. If I can find that, I have reduced my HOG data and computations by a third right off the bat...
 
 ##### Car images:
 
@@ -218,8 +218,8 @@ At the head of the class, I can set the parameters, whether to use color histogr
 
 In order to maximize speed, I take the following steps in my code to perform my search, the code for this is contained in the class I made called `hog_search_window_manager()`
 
-1. Take target frame and clip off areas that should never contain cars (the top and bottom of the image) - let's throw as many pixels away as possible
-2. Next, I created three search areas(defined by my class `SearchArea()`), one where we we expect to see small cars (distant cars), one for medium sized cars, and one for large (cars up close). The larger car area covers a larger area of the screen but the small area is more centered on the approximate horizon.
+1. Take target frame and clip off areas that should never contain cars (the top and bottom of the image) - lets throw as many pixels away as possible
+2. Next, I created three search areas (defined by my class `SearchArea()`), one where we expect to see small cars (distant cars), one for medium sized cars, and one for large (cars up close). The larger car area covers a larger area of the screen but the small area is more centered on the approximate horizon.
 3. As a frame is ready for processing, I calculate the HOG on the clipped frame (I only do this once, and for only the channels used per the Feature_manager() to save on CPU). The results are cached so we only need to do the HOG once.
 4. I now walk through each `SearchArea()` breaking it into tiles (as depicted in the image below). For each tile, I scale up the tile to match the HOG size, then extract the color and spatial features if required. Note the HOG does not need to be re-computed as it was already done in step 3.
 5. Now I compare each tile with the classifier to see if we have a car in the tile, logging that tile if we do.
@@ -250,7 +250,7 @@ Here's a [link to my video result](./output_images/result_output.avi)
 
 #### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-In order to filter out as many false postives as possible, I played with several possible options. Initially I looked at using a heatmap technique that assign a higher probability of a detection based on the number of search tiles that overlap on a given area. While this works if you group together tiles very tightly, I wanted to fast processing, and therefore wanted to limit the number if tiles I tested at runtime.
+In order to filter out as many false postives as possible, I played with several possible options. Initially I looked at using a heatmap technique that assign a higher probability of a detection based on the number of search tiles that overlap on a given area. While this works if you group together tiles very tightly, I wanted fast processing, and therefore wanted to limit the number of tiles I tested at runtime.
 
 What I came up with was a class called `heatmap_filter()`. This is how it works:
 

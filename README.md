@@ -1,4 +1,4 @@
-00## Writeup Template
+## Writeup Template
 ### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
 
 ---
@@ -53,6 +53,12 @@ The goals / steps of this project are the following:
 [image37]: ./output_images/6RGB2LUV.png
 [image38]: ./output_images/6RGB2YCrCb.png
 [image39]: ./output_images/6RGB2YUV.png
+[image40]: ./output_images/test1.png
+[image41]: ./output_images/test2.png
+[image42]: ./output_images/test3.png
+[image43]: ./output_images/test4.png
+[image44]: ./output_images/test5.png
+[image45]: ./output_images/test6.png
 [video1]: ./project_video.mp4
 [video2]: ./output_images/result_output.avi
 
@@ -216,9 +222,16 @@ Image showing the small, medium and large search windows:
 
 #### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+As above, I settled on LUV color space, using the L channel for the HOG, and used spatial binning with 24,24 dimensions, at three different scales.  Here are some example images of detections (some correct and some mismatches too):
 
-![alt text][image4]
+
+
+![alt text][image40]
+![alt text][image41]
+![alt text][image42]
+![alt text][image43]
+![alt text][image44]
+![alt text][image45]
 ---
 
 ### Video Implementation
